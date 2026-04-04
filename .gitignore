@@ -1,12 +1,7 @@
 # ==============================
 # Java / Spring Boot
 # ==============================
-IPL-Zone/
-*.class
-*.jar
-*.war
-*.ear
-*.log
+
 
 # Maven
 .mvn/
