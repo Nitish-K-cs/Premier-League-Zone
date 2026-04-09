@@ -16,10 +16,18 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="teams" element={<Teams />} />
+          <Route path="teams/:teamName" element={<TeamData />} />
+
           <Route path="data" element={<TeamData />} />
+
           <Route path="nation" element={<Nation />} />
+          <Route path="nation/:nationName" element={<TeamData />} /> 
+
           <Route path="position" element={<Position />} />
+          <Route path="position/:positionName" element={<TeamData />} />
+
           <Route path="search" element={<Search />} />
+          <Route path="search/:playerName" element={<TeamData />} />
         </Route>
       </Routes>
     </>

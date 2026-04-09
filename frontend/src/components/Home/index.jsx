@@ -1,41 +1,42 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import LogoPL from '../../assets/images/PL.webp';
-import AnimatedLetters from '../AnimatedLetters';
 import './index.css';
+import LogoPL from '../../assets/images/PL.webp';
 
 const Home = () => {
-    const [letterClass, setLetterClass] = useState('text-animate')
-    const nameArray = "Welcome to".split("");
-    const jobArray = "Premier Zone Fantasy!".split("");
+  return (
+    <div className="home-container">
 
-    useEffect(() => {
-        const timerId = setTimeout(() => {
-          setLetterClass('text-animate-hover');
-        }, 4000);
-      
-        return () => {
-          clearTimeout(timerId);
-        };
-      }, []);
+      {/* Left Content */}
+      <div className="hero-text">
 
-    return(
-      <>
-        <div className = "container home-page">
-            <div className="text-zone">
-                <h1>
-                <img src={LogoPL} alt = "PremierZone" />
-                <br />
-                <AnimatedLetters letterClass={letterClass} strArray={nameArray} idx={12} />
-                <br /> 
-                <AnimatedLetters letterClass={letterClass} strArray={jobArray} idx={15} /> 
-                </h1>
-                <h2>Your home for everything Premier League related!</h2>
-                <Link to="/teams" className="flat-button">GET STARTED</Link>
-            </div>
-        </div>
-      </>
-    )
-}
+        <span className="badge">SEASON 2024/25 MANAGEMENT</span>
 
-export default Home
+        <h1>
+          Welcome to <span>PL</span>
+        </h1>
+
+        <p>
+          The elite digital command center for managing the world’s most 
+          competitive football league assets. Precision data, professional 
+          scouting, and strategic oversight.
+        </p>
+
+        <Link to="/teams" className="cta-button">
+          Get Started →
+        </Link>
+
+      </div>
+
+      {/* Right Image */}
+      <div className="hero-image">
+        <img 
+          src={LogoPL} 
+          alt="player" 
+        />
+      </div>
+
+    </div>
+  );
+};
+
+export default Home;

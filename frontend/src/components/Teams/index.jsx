@@ -1,70 +1,58 @@
 import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import "./index.css";
-import AnimatedLetters from "../AnimatedLetters";
 import teamData from "../../data/teams.json";
 
 const Teams = () => {
-    const [letterClass, setLetterClass] = useState('text-animate');
     const [searchQuery, setSearchQuery] = useState('');
-    const [filteredTeams, setFilteredTeams] = useState([]);
+    const [filteredTeams, setFilteredTeams] = useState(teamData.teams); // ✅ show all initially
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setLetterClass("text-animate-hover");
-        }, 3000); 
+        const filtered = teamData.teams.filter(team =>
+            team.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setFilteredTeams(filtered);
+    }, [searchQuery]);
 
-        return () => { 
-            clearTimeout(timer);
-        }
-    });
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
 
-    useEffect(() => {
-      const filtered = teamData.teams.filter(team =>
-          team.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredTeams(filtered);
-  }, [searchQuery]);
-
-  const handleSearchChange = event => {
-      setSearchQuery(event.target.value);
-  };
-
-    const renderTeam = (teams) => { 
+    const renderTeam = (teams) => {
         return (
-          <div className="images-container">
-            {teams.map((team, idx) => (
-              <div key={idx} className="image-box">
-                <img src={team.cover} alt="teams" className="teams-image" />
-                <div className="content">
-                  <p className="title">{team.title}</p>
-                  <Link className="btn" to={`/data?team=${encodeURIComponent(team.title)}`}>
-                    View
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        )
-      }
-    return (
-        <>
-            <div className="container teams-page">
-                <h1 className = "page-title">
-                    <AnimatedLetters letterClass = {letterClass} strArray={"Teams".split("")} idx={15}/>
-                </h1>
-                <div className="search-bar">
-                    <input
-                        type="text"
-                        placeholder="Search for teams"
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                    />
-                </div>
-                <div>{renderTeam(filteredTeams)}</div>
+            <div className="teams-container">
+                {teams.map((team, idx) => (
+                    <Link 
+                        key={idx} 
+                        to={`/teams/${encodeURIComponent(team.title)}`} 
+                        className="team-card"
+                    >
+                        {/* Placeholder instead of image */}
+                        <div className="team-placeholder">
+                            {team.title}
+                        </div>
+                    </Link>
+                ))}
             </div>
-        </>
-    );
-}
+        );
+    };
 
-export default Teams
+    return (
+        <div className="teams-page">
+            <h1 className="page-title">Teams</h1>
+
+            <div className="search-bar">
+                <input
+                    type="text"
+                    placeholder="Search for teams"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
+            </div>
+
+            {renderTeam(filteredTeams)}
+        </div>
+    );
+};
+
+export default Teams;

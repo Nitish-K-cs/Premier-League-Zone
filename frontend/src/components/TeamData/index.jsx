@@ -1,102 +1,101 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import "./index.css";
-import AnimatedLetters from "../AnimatedLetters";
 
 const TeamData = () => {
+
+  const { teamName, nationName, playerName, positionName } = useParams();
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [playerData, setPlayerData] = useState([]);
   const [playersToShow, setPlayersToShow] = useState(10);
-  const [letterClass] = useState('text-animate');
-  
+
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const teamValue = params.get('team');
-    const nationValue = params.get('nation');
-    const positionValue = params.get('position');
-    const nameValue = params.get('name');
-    
-    if (teamValue) {
-      axios.get(`http://localhost:8080/api/v1/player?team=${encodeURIComponent(teamValue)}`)
-        .then(response => {
-          setPlayerData(response.data);
-          setLoading(false);
-        })
-        .catch(error => {
-          setError(error);
-          setLoading(false);
-        });
-    } else if (nationValue){
-      axios.get(`http://localhost:8080/api/v1/player?nation=${encodeURIComponent(nationValue)}`)
-      .then(response => {
-        setPlayerData(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setError(error);
-        setLoading(false);
-      });
-    } else if (positionValue){
-      axios.get(`http://localhost:8080/api/v1/player?position=${encodeURIComponent(positionValue)}`)
-      .then(response => {
-        setPlayerData(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setError(error);
-        setLoading(false);
-      });
-    } else if (nameValue){
-      axios.get(`http://localhost:8080/api/v1/player?name=${encodeURIComponent(nameValue)}`)
-      .then(response => {
-        setPlayerData(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        setError(error);
-        setLoading(false);
-      });
+    setLoading(true);
+    setError(null);
+
+    let url = "";
+
+    if (teamName) {
+      url = `/api/v1/player?team=${teamName}`;
+    } 
+    else if (nationName) {
+      url = `/api/v1/player?nation=${nationName}`;
+    } 
+    else if (playerName) {
+      url = `/api/v1/player?name=${playerName}`;
     }
-      else {
+    else if (positionName) {
+      url = `/api/v1/player?position=${positionName}`;
+    }
+
+    if (!url) {
       setLoading(false);
+      return;
     }
-  }, []);
 
-  if (loading) {
-    return <p>Loading...</p>;
+    axios.get(`http://localhost:8080${url}`)
+      .then(res => {
+        setPlayerData(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err);
+        setLoading(false);
+      });
+
+  }, [teamName, nationName, playerName, positionName]);
+
+  if (loading) return <p style={{ textAlign: "center" }}>Loading...</p>;
+
+  if (error) return <p style={{ textAlign: "center", color: "red" }}>
+    Error: {error.message}
+  </p>;
+
+  if (playerData.length === 0) {
+    return (
+      <div className="table-container">
+        <h1 className="page-title">
+          {teamName || nationName || playerName || positionName}
+        </h1>
+        <p style={{ textAlign: "center", marginTop: "20px" }}>
+          No players found.
+        </p>
+      </div>
+    );
   }
-
-  if (error) {
-    return <p>Error: {error.message}</p>;
-  }
-
 
   return (
-    <div className={`fade-in ${loading ? 'loading' : ''}`}>
     <div className="table-container">
-      <h1 className = "page-title">
-        <AnimatedLetters letterClass = {letterClass} strArray={"Player Data".split("")} idx={12}/>
+
+      <h1 className="page-title">
+        {teamName && `${teamName} Players`}
+        {nationName && `${nationName} Players`}
+        {playerName && `Search: ${playerName}`}
+        {positionName && `${positionName} Players`}
       </h1>
+
       <table>
         <thead>
           <tr>
             <th>Name</th>
             <th>Position</th>
             <th>Age</th>
-            <th>Matches Played</th>
+            <th>Matches</th>
             <th>Starts</th>
-            <th>Minutes Played</th>
+            <th>Minutes</th>
             <th>Goals</th>
             <th>Assists</th>
-            <th>Penalties Kicked</th>
-            <th>Yellow Cards</th>
-            <th>Red Cards</th>
-            <th>Expected Goals (xG)</th>
-            <th>Expected Assists (xAG)</th>
-            <th>Team</th>
+            <th>PK</th>
+            <th>Yellow</th>
+            <th>Red</th>
+            <th>xG</th>
+            <th>xAG</th>
           </tr>
         </thead>
+
         <tbody>
           {playerData.slice(0, playersToShow).map(player => (
             <tr key={player.name}>
@@ -113,17 +112,20 @@ const TeamData = () => {
               <td>{player.crdr}</td>
               <td>{player.xg}</td>
               <td>{player.xag}</td>
-              <td>{player.team}</td>
             </tr>
           ))}
         </tbody>
       </table>
+
       {playersToShow < playerData.length && (
-        <button onClick={() => setPlayersToShow(playersToShow + 10)} style={{ marginTop: '10px', marginBottom: '10px' }} className={`show-more-button ${loading ? 'loading' : ''}`}>
+        <button 
+          onClick={() => setPlayersToShow(playersToShow + 10)}
+          className="show-more-button"
+        >
           Show More
         </button>
       )}
-    </div>
+
     </div>
   );
 };

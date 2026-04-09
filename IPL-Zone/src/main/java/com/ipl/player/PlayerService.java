@@ -40,16 +40,22 @@ public class PlayerService {
                 .collect(Collectors.toList());
     }
 
-    public List<Player> getPlayersByPosition(String position) {
-        return playerRepository.findAll().stream()
-                .filter(player -> player.getPos().equalsIgnoreCase(position))
-                .collect(Collectors.toList());
+   public List<Player> getPlayersByPosition(String position) {
+    return playerRepository.findAll().stream()
+        .filter(player -> 
+            player.getPos() != null &&
+            player.getPos().toLowerCase().contains(position.toLowerCase())
+        )
+        .collect(Collectors.toList());
     }
 
     public List<Player> getPlayersByNation(String nation) {
-        return playerRepository.findAll().stream()
-                .filter(player -> player.getNation().equalsIgnoreCase(nation))
-                .collect(Collectors.toList());
+    return playerRepository.findAll().stream()
+        .filter(player -> 
+            player.getNation() != null && 
+            player.getNation().equalsIgnoreCase(nation)
+        )
+        .collect(Collectors.toList());
     }
 
     public Player addPlayer(Player player) {

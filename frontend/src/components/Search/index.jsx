@@ -1,51 +1,42 @@
 import React, { useEffect, useState } from "react";
-import Loader from "react-loaders";
+import { useNavigate } from "react-router-dom";
 import "./index.css";
-import AnimatedLetters from "../AnimatedLetters";
 
 const Search = () => {
-    const [letterClass, setLetterClass] = useState('text-animate');
     const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate(); // ✅
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setLetterClass("text-animate-hover");
-        }, 3000); 
-
-        return () => { 
-            clearTimeout(timer);
-        }
-    }, []);
-
-    const handleSearchChange = event => {
+    const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
     };
 
     const handleGoButtonClick = () => {
-        window.location.href = `/data?name=${encodeURIComponent(searchQuery)}`;
+        if (!searchQuery.trim()) return;
+
+        // ✅ Navigate without reload
+        navigate(`/search/${encodeURIComponent(searchQuery)}`);
     };
 
     return (
-        <>
-            <div className="container teams-page">
-                <h1 className="page-title">
-                    <br/>
-                    <br/>
-                    <AnimatedLetters letterClass={letterClass} strArray={"Search".split("")} idx={15}/>
-                </h1>
-                <div className="search-bar">
-                    <input
-                        type="text"
-                        placeholder="Search for players"
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                    />
-                    <button onClick={handleGoButtonClick}>Go</button>
-                </div>
+        <div className="search-page">
+
+            <h1 className="page-title">Search Players</h1>
+
+            <div className="search-bar">
+                <input
+                    type="text"
+                    placeholder="Search for players..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
+
+                <button onClick={handleGoButtonClick}>
+                    Search
+                </button>
             </div>
-            <Loader type="pacman"/>
-        </>
+
+        </div>
     );
-}
+};
 
 export default Search;
